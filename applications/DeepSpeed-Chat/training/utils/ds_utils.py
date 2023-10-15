@@ -27,11 +27,18 @@ def get_train_ds_config(offload,
     zero_opt_dict = {
         "stage": stage,
         "offload_param": {
-            "device": device
+            "device": "cpu",
+            "pin_memory": True
         },
         "offload_optimizer": {
-            "device": device
+            "device": "cpu",
+            "pin_memory": True
         },
+        "overlap_comm": True,
+        "contiguous_gradients": True,
+        "sub_group_size": 1e9,
+        "reduce_bucket_size": "auto",
+
         "stage3_param_persistence_threshold": 1e4,
         "stage3_max_live_parameters": 3e7,
         "stage3_prefetch_bucket_size": 3e7,
@@ -48,7 +55,7 @@ def get_train_ds_config(offload,
         "steps_per_print": 10,
         "zero_optimization": zero_opt_dict,
         "fp16": {
-            "enabled": True,
+            "enabled": False,
             "loss_scale_window": 100
         },
         "gradient_clipping": 1.0,
@@ -82,7 +89,7 @@ def get_eval_ds_config(offload, stage=0):
     }
     return {
         "train_batch_size": GLOBAL_BATCH_SIZE,
-        "train_micro_batch_size_per_gpu": MICRO_BATCH_SIZE,
+        "train_micro_batch_size_per_gpu": "auto",
         "steps_per_print": 10,
         "zero_optimization": zero_opt_dict,
         "fp16": {

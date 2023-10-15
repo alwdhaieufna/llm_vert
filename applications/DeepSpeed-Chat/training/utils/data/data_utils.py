@@ -68,6 +68,9 @@ def get_raw_dataset(dataset_name, output_path, seed, local_rank):
         chat_path = os.path.abspath(
             os.path.join(os.path.dirname(__file__), os.path.pardir,
                          os.path.pardir, os.path.pardir))
+        print("chat_path:")
+        print(chat_path)
+        chat_path = "/vc_data/users/wuning/GenSERP/DeepSpeedExamples/applications/DeepSpeed-Chat"
         if not (os.path.isfile(chat_path + '/data/train.json')
                 and os.path.isfile(chat_path + '/data/eval.json')):
             raise RuntimeError(
@@ -170,6 +173,12 @@ def create_dataset_split(current_dataset, raw_dataset, train_phase, tokenizer,
                                          padding="max_length",
                                          truncation=True,
                                          return_tensors="pt")
+
+                chosen_token_2 = tokenizer(chosen_sentence,
+                                         return_tensors="pt")
+
+                print("real chosen input length:")
+                print(chosen_token_2["input_ids"].shape)
                 chosen_token["input_ids"] = chosen_token["input_ids"].squeeze(
                     0)
                 chosen_token["attention_mask"] = chosen_token[
@@ -265,7 +274,7 @@ def create_prompt_dataset(local_rank,
                           max_seq_len,
                           end_of_conversation_token="<|endoftext|>",
                           sft_only_data_path=[],
-                          reload=False):
+                          reload=True):
     """
     Creates the prompt dataset
     """
