@@ -44,7 +44,7 @@ def parse_args():
                         'form: dataset1-path dataset2-path ...')
     parser.add_argument('--data_split',
                         type=str,
-                        default='2,4,4',
+                        default='9,1,1',
                         help='Comma-separated list of proportions for training'
                         'phase 1, 2, and 3 data. For example the split `6,2,2`'
                         'will use 60%% of data for phase 1, 20%% for phase 2'
@@ -264,6 +264,7 @@ def main():
         losses = 0
         for step, batch in enumerate(eval_dataloader):
             batch = to_device(batch, device)
+            
             with torch.no_grad():
                 outputs = model(**batch)
 
@@ -325,6 +326,14 @@ def main():
         import time
         for step, batch in enumerate(train_dataloader):
             start = time.time()
+            print("batch:")
+            print(batch)
+
+            input_text = tokenizer.batch_decode(batch["input_ids"],
+                                    skip_special_tokens=True,
+                                    clean_up_tokenization_spaces=False)            
+            print("input_text")
+            print(input_text)
             batch = to_device(batch, device)
             outputs = model(**batch, use_cache=False)
             loss = outputs.loss
